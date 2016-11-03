@@ -143,7 +143,17 @@ public class AddressBookServiceTest {
 		// Verify that GET /contacts/person/3 is well implemented by the service, i.e
 		// test that it is safe and idempotent
 		//////////////////////////////////////////////////////////////////////	
-	
+
+        //It returns the same state than the first get, so it's idempotent
+        Response rTest = client.target("http://localhost:8282/contacts/person/3")
+                .request(MediaType.APPLICATION_JSON).get();
+        assertEquals(200, rTest.getStatus());
+
+        //We check that the name, the ID and the ref are the same as above, so it's safe
+        Person pTest = rTest.readEntity(Person.class);
+        assertEquals(pTest.getName(), mariaUpdated.getName());
+        assertEquals(3, mariaUpdated.getId());
+        assertEquals(pTest.getHref(), mariaUpdated.getHref());
 	}
 
 	@Test
